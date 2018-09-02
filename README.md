@@ -18,7 +18,7 @@ any messages or errors it sends, as well as the `postMessage` handler.
 - Provides `postMessage` to send messages to the Web Worker
 - Accepts `onMessage` and `onError` callbacks
 
-> This package was modeled after [`<Async>`](https://github.com/ghengeveld/react-webworker) which helps you deal with Promises in React.
+> This package was modeled after [`<Async>`](https://github.com/ghengeveld/react-async) which helps you deal with Promises in React.
 
 ## Install
 
