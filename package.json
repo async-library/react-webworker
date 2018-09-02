@@ -1,0 +1,40 @@
+{
+  "name": "react-webworker",
+  "version": "0.0.0",
+  "description": "Communicate with Web Workers from React",
+  "keywords": [
+    "react",
+    "web worker"
+  ],
+  "author": "Gert Hengeveld <info@ghengeveld.nl>",
+  "license": "ISC",
+  "homepage": "https://github.com/ghengeveld/react-webworker",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghengeveld/react-webworker.git"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "babel src -d lib",
+    "prepublish": "npm run build"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "react": ">=16.3.0"
+  },
+  "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-preset-env": "1.7.0",
+    "babel-preset-flow": "6.23.0",
+    "babel-preset-react": "6.24.1",
+    "babel-preset-stage-2": "6.24.1",
+    "jest": "23.5.0",
+    "jest-dom": "1.12.0",
+    "react": "16.4.2",
+    "react-dom": "16.4.2",
+    "react-testing-library": "5.0.0"
+  }
+}
