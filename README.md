@@ -77,7 +77,7 @@ const MyComponent = () => (
 
 `<WebWorker>` takes the following properties:
 
-- `path` {string} Public path to the Web Worker file (from the root of your domain)
+- `path` {string} (required) Public path to the Web Worker file (from the root of your domain)
 - `onMessage` {Function} Callback function invoked when a message is received, passing message data as argument
 - `onError` {Function} Callback function invoked when an error is received, passing error object as argument
 
