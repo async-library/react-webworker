@@ -85,8 +85,8 @@ const MyComponent = () => (
 
 `<WebWorker>` provides the following render props:
 
-- `messages` {Array} list of received messages, in chronological order
-- `errors` {Array} list of received errors, in chronological order
+- `messages` {Array} list of received messages ({ data, date }), in chronological order
+- `errors` {Array} list of received errors ({ error, date }), in chronological order
 - `data` {any} last received message data, maintained when an error is received
 - `error` {Error} last received error, cleared when new message arrives
 - `updatedAt` {Date} when the last message or error was received
