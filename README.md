@@ -81,7 +81,7 @@ const MyComponent = () => (
 
 - `url` {string} (required) Public url to the Web Worker file (or path relative to the root of your domain)
 - `options` {Object} Options passed to the Worker constructor
-- `parser` {Function} Transforms incoming messages (not errors)
+- `parser` {Function} Transforms incoming message data (not errors)
 - `serializer` {Function} Transforms `postMessage` payload before sending
 - `onMessage` {Function} Callback function invoked when a message is received, passing message data as argument
 - `onError` {Function} Callback function invoked when an error is received, passing error object as argument
@@ -100,8 +100,8 @@ const MyComponent = () => (
 - `postMessage` {Function} sends a message to the Web Worker
 
 > Note: [it's recommended](https://nolanlawson.com/2016/02/29/high-performance-web-worker-messages/) to send and receive
-> JSON strings instead of JS objects for improved performance. `<WebWorker>` can't do this for you, so you'll have to
-> stringify and parse message data yourself if you care about performance.
+> JSON strings instead of JS objects for improved performance. You can use the `parser` and `serializer` props to have
+> `<WebWorker>` deal with this on the client side, but your Worker must still (de)serialize messages on its end.
 
 ## Examples
 
