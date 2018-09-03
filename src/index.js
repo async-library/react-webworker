@@ -5,7 +5,8 @@ const getInitialState = () => ({
   errors: [],
   data: undefined,
   error: undefined,
-  updatedAt: undefined
+  updatedAt: undefined,
+  lastPostAt: undefined
 })
 
 const uninitialized = () => {
@@ -35,6 +36,11 @@ class WebWorker extends React.Component {
     )
   }
 
+  postMessage = data => {
+    const { postMessage = uninitialized } = this.worker || {}
+    this.setState({ lastPostAt: new Date() }, () => postMessage.call(this.worker, data))
+  }
+
   componentDidMount() {
     this.worker = new window.Worker(this.props.path)
     this.worker.onmessage = this.onMessage
@@ -50,10 +56,9 @@ class WebWorker extends React.Component {
 
   render() {
     const { children } = this.props
-    const { postMessage = uninitialized } = this.worker || {}
     const renderProps = {
       ...this.state,
-      postMessage: (...args) => postMessage.call(this.worker, ...args)
+      postMessage: this.postMessage
     }
 
     if (typeof children === "function") {
