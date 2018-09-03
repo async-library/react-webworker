@@ -8,7 +8,7 @@
 [![GitHub PRs](https://img.shields.io/github/issues-pr/ghengeveld/react-webworker.svg)](https://github.com/ghengeveld/react-webworker/pulls)
 
 React component for easy communication with a Web Worker. Leverages the Render Props pattern for ultimate flexibility as
-well as the new Context API for ease of use. Just specify the public path to your Web Worker and you'll get access to
+well as the new Context API for ease of use. Just specify the public url to your Web Worker and you'll get access to
 any messages or errors it sends, as well as the `postMessage` handler.
 
 - Zero dependencies
@@ -35,7 +35,7 @@ Using render props for ultimate flexibility:
 import WebWorker from "react-webworker"
 
 const MyComponent = () => (
-  <WebWorker path="/worker.js">
+  <WebWorker url="/worker.js">
     {({ data, error, postMessage }) => {
       if (error) return `Something went wrong: ${error.message}`
       if (data)
@@ -57,7 +57,7 @@ Using helper components (don't have to be direct children) for ease of use:
 import WebWorker from "react-webworker"
 
 const MyComponent = () => (
-  <WebWorker path="/worker.js">
+  <WebWorker url="/worker.js">
     <WebWorker.Pending>
       {({ postMessage }) => <button onClick={() => postMessage("hello")}>Hello</button>}
     </WebWorker.Pending>
@@ -78,9 +78,12 @@ const MyComponent = () => (
 
 `<WebWorker>` takes the following properties:
 
-- `path` {string} (required) Public path to the Web Worker file (from the root of your domain)
+- `url` {string} (required) Public url to the Web Worker file (from the root of your domain)
+- `options` {Object} Options passed to the Worker constructor
 - `onMessage` {Function} Callback function invoked when a message is received, passing message data as argument
 - `onError` {Function} Callback function invoked when an error is received, passing error object as argument
+
+> `url` and `options` are evaluated at mount time, so they must be defined immediately and won't respond to changes.
 
 ### Render props
 
@@ -101,7 +104,7 @@ const MyComponent = () => (
 import WebWorker from "react-webworker"
 
 const MyComponent = () => (
-  <WebWorker path="/worker.js">
+  <WebWorker url="/worker.js">
     {({ data, error, postMessage, updatedAt, lastPostAt }) => (
       <div>
         {data && (
@@ -115,6 +118,18 @@ const MyComponent = () => (
         </button>
       </div>
     )}
+  </WebWorker>
+)
+```
+
+### Passing options to the Worker
+
+```js
+import WebWorker from "react-webworker"
+
+const MyComponent = () => (
+  <WebWorker url="/worker.js" options={{ type: "module", credentials: "include" }}>
+    ...
   </WebWorker>
 )
 ```

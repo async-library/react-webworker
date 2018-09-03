@@ -42,7 +42,10 @@ class WebWorker extends React.Component {
   }
 
   componentDidMount() {
-    this.worker = new window.Worker(this.props.path)
+    if (this.props.path && console) {
+      console.warn("`path` is deprecated and will be removed in the next major release. Use `url` instead.")
+    }
+    this.worker = new window.Worker(this.props.url || this.props.path, this.props.options)
     this.worker.onmessage = this.onMessage
     this.worker.onerror = this.onError
     this.mounted = true
