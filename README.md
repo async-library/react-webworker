@@ -96,6 +96,10 @@ const MyComponent = () => (
 - `updatedAt` {Date} when the last message or error was received
 - `postMessage` {Function} sends a message to the Web Worker
 
+> Note: [it's recommended](https://nolanlawson.com/2016/02/29/high-performance-web-worker-messages/) to send and receive
+> JSON strings instead of JS objects for improved performance. `<WebWorker>` can't do this for you, so you'll have to
+> stringify and parse message data yourself if you care about performance.
+
 ## Examples
 
 ### Using `lastPostAt` to show a loading indicator
