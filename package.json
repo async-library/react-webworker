@@ -19,7 +19,8 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src -d lib",
-    "prepublish": "npm run build"
+    "test": "jest src",
+    "prepublish": "npm test && npm run build"
   },
   "dependencies": {},
   "peerDependencies": {
