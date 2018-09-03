@@ -16,6 +16,7 @@ any messages or errors it sends, as well as the `postMessage` handler.
 - Provides timestamped `messages` and `errors`
 - Provides easy access to the last message `data` and last `error`
 - Provides `postMessage` to send messages to the Web Worker
+- Provides `updatedAt` and `lastPostAt` metadata
 - Accepts `onMessage` and `onError` callbacks
 
 > This package was modeled after [`<Async>`](https://github.com/ghengeveld/react-async) which helps you deal with Promises in React.
@@ -91,6 +92,32 @@ const MyComponent = () => (
 - `error` {Error} last received error, cleared when new message arrives
 - `updatedAt` {Date} when the last message or error was received
 - `postMessage` {Function} sends a message to the Web Worker
+
+## Examples
+
+### Using `lastPostAt` to show a loading indicator
+
+```js
+import WebWorker from "react-webworker"
+
+const MyComponent = () => (
+  <WebWorker path="/worker.js">
+    {({ data, error, postMessage, updatedAt, lastPostAt }) => (
+      <div>
+        {data && (
+          <div>
+            <strong>Received some data:</strong>
+            <pre>{JSON.stringify(data, null, 2)}</pre>
+          </div>
+        )}
+        <button onClick={() => postMessage("hello")} disabled={updatedAt < lastPostAt}>
+          {updatedAt < lastPostAt ? "Loading..." : "Go"}
+        </button>
+      </div>
+    )}
+  </WebWorker>
+)
+```
 
 ## Helper components
 
