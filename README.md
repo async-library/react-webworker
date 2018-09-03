@@ -17,6 +17,7 @@ any messages or errors it sends, as well as the `postMessage` handler.
 - Provides easy access to the last message `data` and last `error`
 - Provides `postMessage` to send messages to the Web Worker
 - Provides `updatedAt` and `lastPostAt` metadata
+- Accepts `parser` and `serializer` for automatic message (de)serialization
 - Accepts `onMessage` and `onError` callbacks
 
 > This package was modeled after [`<Async>`](https://github.com/ghengeveld/react-async) which helps you deal with Promises in React.
@@ -80,6 +81,8 @@ const MyComponent = () => (
 
 - `url` {string} (required) Public url to the Web Worker file (or path relative to the root of your domain)
 - `options` {Object} Options passed to the Worker constructor
+- `parser` {Function} Transforms incoming messages (not errors)
+- `serializer` {Function} Transforms `postMessage` payload before sending
 - `onMessage` {Function} Callback function invoked when a message is received, passing message data as argument
 - `onError` {Function} Callback function invoked when an error is received, passing error object as argument
 
@@ -137,6 +140,30 @@ const MyComponent = () => (
   </WebWorker>
 )
 ```
+
+### Using `parser` and `serializer` to automatically parse incoming messages and stringify outgoing messages
+
+```js
+import WebWorker from "react-webworker"
+
+const MyComponent = () => (
+  <WebWorker url="/worker.js" parser={JSON.parse} serializer={JSON.stringify}>
+    {({ data, error, postMessage, updatedAt, lastPostAt }) => (
+      <div>
+        {data && (
+          <div>
+            <strong>Received some data:</strong>
+            <pre>{JSON.stringify(data, null, 2)}</pre>
+          </div>
+        )}
+        <button onClick={() => postMessage({ foo: "bar" })}>Send</button>
+      </div>
+    )}
+  </WebWorker>
+)
+```
+
+> Note: the Worker must still implement JSON (de)serialization on its own end.
 
 ## Helper components
 

@@ -18,8 +18,9 @@ const { Consumer, Provider } = React.createContext(getInitialState())
 class WebWorker extends React.Component {
   state = getInitialState()
 
-  onMessage = ({ data }) => {
+  onMessage = message => {
     if (!this.mounted) return
+    const data = this.props.parser ? this.props.parser(message.data) : message.data
     const date = new Date()
     this.setState(
       state => ({ data, error: undefined, messages: state.messages.concat({ data, date }), updatedAt: date }),
@@ -37,8 +38,9 @@ class WebWorker extends React.Component {
   }
 
   postMessage = data => {
+    const { serializer = x => x } = this.props
     const { postMessage = uninitialized } = this.worker || {}
-    this.setState({ lastPostAt: new Date() }, () => postMessage.call(this.worker, data))
+    this.setState({ lastPostAt: new Date() }, () => postMessage.call(this.worker, serializer(data)))
   }
 
   componentDidMount() {
