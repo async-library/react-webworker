@@ -19,6 +19,7 @@ any messages or errors it sends, as well as the `postMessage` handler.
 - Provides `updatedAt` and `lastPostAt` metadata
 - Accepts `parser` and `serializer` for automatic message (de)serialization
 - Accepts `onMessage` and `onError` callbacks
+- Supports custom Worker instance through the `worker` prop **(new in v2)**
 
 > This package was modeled after [`<Async>`](https://github.com/ghengeveld/react-async) which helps you deal with Promises in React.
 
