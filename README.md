@@ -90,6 +90,8 @@ const MyComponent = () => (
 
 > `url` and `options` are evaluated at mount time, so they must be defined immediately and won't respond to changes.
 
+> A custom Worker provided through `worker` will not get terminated on unmount. You'll have to manage its lifecycle yourself.
+
 ### Render props
 
 `<WebWorker>` provides the following render props:
