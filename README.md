@@ -81,6 +81,7 @@ const MyComponent = () => (
 
 - `url` {string} (required) Public url to the Web Worker file (or path relative to the root of your domain)
 - `options` {Object} Options passed to the Worker constructor
+- `worker` {Worker} An existing Worker instance to use instead of creating a new one (ignoring `url` and `options`)
 - `parser` {Function} Transforms incoming message data (not errors)
 - `serializer` {Function} Transforms `postMessage` payload before sending
 - `onMessage` {Function} Callback function invoked when a message is received, passing message data as argument

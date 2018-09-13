@@ -121,6 +121,28 @@ test("parser will deserialize messages received from the worker", async () => {
   await waitForElement(() => getByText("bar"))
 })
 
+test("supports passing a custom Worker instance", () => {
+  const onMessage = jest.fn()
+  const customWorker = { postMessage: jest.fn() }
+  const { getByText } = render(
+    <WebWorker worker={customWorker} onMessage={onMessage}>
+      {({ postMessage }) => <button onClick={() => postMessage("hello")}>go</button>}
+    </WebWorker>
+  )
+  customWorker.onmessage({ data: "foo" })
+  expect(onMessage).toHaveBeenCalledWith("foo")
+  expect(customWorker.postMessage).not.toHaveBeenCalled()
+  fireEvent.click(getByText("go"))
+  expect(customWorker.postMessage).toHaveBeenCalledWith("hello")
+})
+
+test("custom workers don't terminate on unmount", async () => {
+  const customWorker = { terminate: jest.fn() }
+  const { unmount } = render(<WebWorker worker={customWorker} />)
+  unmount()
+  expect(customWorker.terminate).not.toHaveBeenCalled()
+})
+
 test("WebWorker.Data renders with last message data only when a message has been received", async () => {
   const { getByText, queryByText } = render(
     <WebWorker>
