@@ -1,22 +1,24 @@
 import React from "react"
 
-const getInitialState = () => ({
-  messages: [],
-  errors: [],
-  data: undefined,
-  error: undefined,
-  updatedAt: undefined,
-  lastPostAt: undefined
-})
-
-const uninitialized = () => {
-  throw new Error("Not initialized")
-}
-
-const { Consumer, Provider } = React.createContext(getInitialState())
+const { Consumer, Provider } = React.createContext()
 
 class WebWorker extends React.Component {
-  state = getInitialState()
+  constructor(props) {
+    super(props)
+    this.state = {
+      messages: [],
+      errors: [],
+      data: undefined,
+      error: undefined,
+      updatedAt: undefined,
+      lastPostAt: undefined,
+      postMessage: this.postMessage
+    }
+  }
+
+  uninitialized = () => {
+    throw new Error("Worker not initialized")
+  }
 
   onMessage = message => {
     if (!this.mounted) return
@@ -39,7 +41,7 @@ class WebWorker extends React.Component {
 
   postMessage = data => {
     const { serializer = x => x } = this.props
-    const { postMessage = uninitialized } = this.worker || {}
+    const { postMessage = this.uninitialized } = this.worker || {}
     this.setState({ lastPostAt: new Date() }, () => postMessage.call(this.worker, serializer(data)))
   }
 
@@ -49,7 +51,6 @@ class WebWorker extends React.Component {
     this.worker.onmessage = this.onMessage
     this.worker.onerror = this.onError
     this.mounted = true
-    this.setState(getInitialState())
   }
 
   componentWillUnmount() {
@@ -59,19 +60,12 @@ class WebWorker extends React.Component {
 
   render() {
     const { children } = this.props
-    const renderProps = {
-      ...this.state,
-      postMessage: this.postMessage
-    }
-
     if (typeof children === "function") {
-      return <Provider value={renderProps}>{children(renderProps)}</Provider>
+      return <Provider value={this.state}>{children(this.state)}</Provider>
     }
-
     if (children !== undefined && children !== null) {
-      return <Provider value={renderProps}>{children}</Provider>
+      return <Provider value={this.state}>{children}</Provider>
     }
-
     return null
   }
 }
@@ -80,14 +74,14 @@ class WebWorker extends React.Component {
  * Renders only when no message or error has been received yet
  *
  * @prop {boolean} persist Show until we have data, even when an error occurred
- * @prop {Function|Node} children Function (passing props) or React node
+ * @prop {Function|Node} children Function (passing state) or React node
  */
 WebWorker.Pending = ({ children, persist }) => (
   <Consumer>
-    {props => {
-      if (props.data !== undefined) return null
-      if (!persist && props.error !== undefined) return null
-      return typeof children === "function" ? children(props) : children || null
+    {state => {
+      if (state.data !== undefined) return null
+      if (!persist && state.error !== undefined) return null
+      return typeof children === "function" ? children(state) : children || null
     }}
   </Consumer>
 )
@@ -95,13 +89,13 @@ WebWorker.Pending = ({ children, persist }) => (
 /**
  * Renders only when worker has sent a message with data
  *
- * @prop {Function|Node} children Function (passing data and props) or React node
+ * @prop {Function|Node} children Function (passing data and state) or React node
  */
 WebWorker.Data = ({ children }) => (
   <Consumer>
-    {props => {
-      if (props.data === undefined) return null
-      return typeof children === "function" ? children(props.data, props) : children || null
+    {state => {
+      if (state.data === undefined) return null
+      return typeof children === "function" ? children(state.data, state) : children || null
     }}
   </Consumer>
 )
@@ -109,13 +103,13 @@ WebWorker.Data = ({ children }) => (
 /**
  * Renders only when worker has sent an error
  *
- * @prop {Function|Node} children Function (passing error and props) or React node
+ * @prop {Function|Node} children Function (passing error and state) or React node
  */
 WebWorker.Error = ({ children }) => (
   <Consumer>
-    {props => {
-      if (props.error === undefined) return null
-      return typeof children === "function" ? children(props.error, props) : children || null
+    {state => {
+      if (state.error === undefined) return null
+      return typeof children === "function" ? children(state.error, state) : children || null
     }}
   </Consumer>
 )

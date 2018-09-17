@@ -194,3 +194,27 @@ test("WebWorker.Pending renders only when no error has been received yet", async
   worker.onerror({ error: "foo" })
   expect(queryByText("pending")).toBeNull()
 })
+
+test("An unrelated change in props does not update the Context", async () => {
+  let one
+  let two
+  const { rerender } = render(
+    <WebWorker>
+      <WebWorker.Pending>
+        {value => {
+          one = value
+        }}
+      </WebWorker.Pending>
+    </WebWorker>
+  )
+  rerender(
+    <WebWorker someProp>
+      <WebWorker.Pending>
+        {value => {
+          two = value
+        }}
+      </WebWorker.Pending>
+    </WebWorker>
+  )
+  expect(one).toBe(two)
+})
