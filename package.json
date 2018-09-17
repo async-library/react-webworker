@@ -1,6 +1,6 @@
 {
   "name": "react-webworker",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Communicate with Web Workers from React",
   "keywords": [
     "react",
