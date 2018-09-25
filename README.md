@@ -76,6 +76,28 @@ const MyComponent = () => (
 )
 ```
 
+### Usage with Parcel or `worker-plugin` for Webpack
+
+[Parcel](https://parceljs.org) and [worker-plugin](https://npm.im/worker-plugin) allow your Web Worker script to be
+automatically bundled. However this only works when you create the Worker instance yourself, instead of having react-webworker
+do it for you. Here's how that works:
+
+```js
+import WebWorker from "react-webworker"
+
+const myWorker = new Worker("./worker.js") // relative path to the source file, not the public URL
+
+const MyComponent = () => (
+  <WebWorker worker={myWorker}>
+    ...
+  </WebWorker>
+)
+```
+
+The downside to this approach is that `<WebWorker>` will not manage the Worker's lifecycle. This means it will not automatically be terminated when `<WebWorker>` is unmounted.
+
+## API
+
 ### Props
 
 `<WebWorker>` takes the following properties:
