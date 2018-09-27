@@ -97,6 +97,16 @@ test("postMessage sends messages to the worker", async () => {
   expect(worker.postMessage).toHaveBeenCalledWith("hello")
 })
 
+test("calling postMessage before having setup a worker will throw", async () => {
+  render(
+    <WebWorker>
+      {({ postMessage }) => {
+        expect(() => postMessage("hello")).toThrow(new Error("Worker not initialized"))
+      }}
+    </WebWorker>
+  )
+})
+
 test("serializer will prepare messages before sending them to the worker", async () => {
   worker.postMessage.mockClear()
   const { getByText } = render(

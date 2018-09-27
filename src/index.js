@@ -16,10 +16,6 @@ class WebWorker extends React.Component {
     }
   }
 
-  uninitialized = () => {
-    throw new Error("Worker not initialized")
-  }
-
   onMessage = message => {
     if (!this.mounted) return
     const data = this.props.parser ? this.props.parser(message.data) : message.data
@@ -41,7 +37,8 @@ class WebWorker extends React.Component {
 
   postMessage = data => {
     const { serializer = x => x } = this.props
-    const { postMessage = this.uninitialized } = this.worker || {}
+    const { postMessage } = this.worker || {}
+    if (!postMessage) throw new Error("Worker not initialized")
     this.setState({ lastPostAt: new Date() }, () => postMessage.call(this.worker, serializer(data)))
   }
 
