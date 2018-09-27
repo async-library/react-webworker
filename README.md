@@ -2,8 +2,10 @@
 
 [![npm version](https://img.shields.io/npm/v/react-webworker.svg)](https://www.npmjs.com/package/react-webworker)
 [![npm downloads](https://img.shields.io/npm/dm/react-webworker.svg)](https://www.npmjs.com/package/react-webworker)
-[![ISC license](https://img.shields.io/npm/l/react-webworker.svg)](https://opensource.org/licenses/ISC)
 [![minified size](https://img.shields.io/bundlephobia/min/react-webworker.svg)](https://bundlephobia.com/result?p=react-webworker)
+[![Build status](https://img.shields.io/travis/ghengeveld/react-webworker.svg)](https://travis-ci.org/ghengeveld/react-webworker)
+[![Code coverage](https://img.shields.io/codecov/c/github/ghengeveld/react-webworker.svg)](https://codecov.io/github/ghengeveld/react-webworker)
+[![ISC license](https://img.shields.io/npm/l/react-webworker.svg)](https://opensource.org/licenses/ISC)
 [![GitHub issues](https://img.shields.io/github/issues/ghengeveld/react-webworker.svg)](https://github.com/ghengeveld/react-webworker/issues)
 [![GitHub PRs](https://img.shields.io/github/issues-pr/ghengeveld/react-webworker.svg)](https://github.com/ghengeveld/react-webworker/pulls)
 
