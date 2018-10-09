@@ -39,14 +39,29 @@ class WebWorker extends React.Component {
     const { serializer = x => x } = this.props
     const { postMessage } = this.worker || {}
     if (!postMessage) throw new Error("Worker not initialized")
-    this.setState({ lastPostAt: new Date() }, () => postMessage.call(this.worker, serializer(data)))
+    if (this.worker.state && this.worker.state !== "activated") return
+    this.setState(
+      { lastPostAt: new Date() },
+      () =>
+        this.messageChannel
+          ? postMessage.call(this.worker, serializer(data), [this.messageChannel.port2])
+          : postMessage.call(this.worker, serializer(data))
+    )
   }
 
   componentDidMount() {
     const { url, options, worker } = this.props
-    this.worker = worker || new window.Worker(url, options)
-    this.worker.onmessage = this.onMessage
-    this.worker.onerror = this.onError
+    this.worker = url ? new window.Worker(url, options) : worker.controller || worker
+
+    if ("onmessage" in this.worker) {
+      this.worker.onmessage = this.onMessage
+      this.worker.onerror = this.onError
+    } else {
+      this.messageChannel = new window.MessageChannel()
+      this.messageChannel.port1.onmessage = this.onMessage
+      this.messageChannel.port1.onmessageerror = this.onError
+    }
+
     this.mounted = true
   }
 

@@ -11,7 +11,7 @@
 
 React component for easy communication with a Web Worker. Leverages the Render Props pattern for ultimate flexibility as
 well as the new Context API for ease of use. Just specify the public url to your Web Worker and you'll get access to
-any messages or errors it sends, as well as the `postMessage` handler.
+any messages or errors it sends, as well as the `postMessage` handler. Also works with Service Workers.
 
 - Zero dependencies
 - Choose between Render Props and Context-based helper components
@@ -22,6 +22,7 @@ any messages or errors it sends, as well as the `postMessage` handler.
 - Accepts `parser` and `serializer` for automatic message (de)serialization
 - Accepts `onMessage` and `onError` callbacks
 - Supports custom Worker instance through the `worker` prop **(new in v2)**
+- Supports communication with Service Workers **(new in v2.1)**
 
 > This package was modeled after [`<Async>`](https://github.com/ghengeveld/react-async) which helps you deal with Promises in React.
 
@@ -89,14 +90,32 @@ import WebWorker from "react-webworker"
 
 const myWorker = new Worker("./worker.js") // relative path to the source file, not the public URL
 
-const MyComponent = () => (
-  <WebWorker worker={myWorker}>
-    ...
-  </WebWorker>
-)
+const MyComponent = () => <WebWorker worker={myWorker}>...</WebWorker>
 ```
 
 The downside to this approach is that `<WebWorker>` will not manage the Worker's lifecycle. This means it will not automatically be terminated when `<WebWorker>` is unmounted.
+
+### Communicating with a Service Worker
+
+Using `<WebWorker>` with a Service Worker is as simple as passing it as a custom worker instance:
+
+```js
+const MyComponent = () => <WebWorker worker={navigator.serviceWorker}>...</WebWorker>
+```
+
+This will automatically setup a `MessageChannel` to enable bidirectional communication. Your Service Worker could look
+like this:
+
+```js
+// `ports` is automatically provided with a MessageChannel port
+self.onmessage = ({ data, ports: [port] }) => {
+  console.log("inside the service worker:", data)
+  port.postMessage(data) // instead of `self.postMessage`
+}
+```
+
+Note that messages sent to an inactive (not "activated") Service Worker will be silently ignored. Like a custom Worker,
+you'll have to deal with the Service Worker lifecycle yourself.
 
 ## API
 

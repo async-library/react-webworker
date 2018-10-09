@@ -5,8 +5,12 @@ import WebWorker from "./"
 
 afterEach(cleanup)
 
-const worker = { postMessage: jest.fn(), terminate: jest.fn() }
+const worker = { onmessage: null, postMessage: jest.fn(), terminate: jest.fn() }
+const serviceWorker = { postMessage: jest.fn() }
+const messageChannel = { port1: {}, port2: jest.fn() }
 window.Worker = jest.fn().mockImplementation(() => worker)
+window.ServiceWorker = jest.fn().mockImplementation(() => serviceWorker)
+window.MessageChannel = jest.fn().mockImplementation(() => messageChannel)
 
 test("initializes a Worker on mount", () => {
   const options = {}
@@ -15,7 +19,9 @@ test("initializes a Worker on mount", () => {
 })
 
 test("passes received messages to children as render prop", async () => {
-  const { getByText } = render(<WebWorker>{({ messages }) => messages.map(m => m.data).join()}</WebWorker>)
+  const { getByText } = render(
+    <WebWorker url="/worker.js">{({ messages }) => messages.map(m => m.data).join()}</WebWorker>
+  )
   worker.onmessage({ data: "foo" })
   worker.onmessage({ data: "bar" })
   worker.onmessage({ data: "baz" })
@@ -23,7 +29,7 @@ test("passes received messages to children as render prop", async () => {
 })
 
 test("passes data of last received message to children as render prop", async () => {
-  const { getByText } = render(<WebWorker>{({ data }) => data}</WebWorker>)
+  const { getByText } = render(<WebWorker url="/worker.js">{({ data }) => data}</WebWorker>)
   worker.onmessage({ data: "foo" })
   worker.onmessage({ data: "bar" })
   worker.onmessage({ data: "baz" })
@@ -31,7 +37,9 @@ test("passes data of last received message to children as render prop", async ()
 })
 
 test("passes received errors to children as render prop", async () => {
-  const { getByText } = render(<WebWorker>{({ errors }) => errors.map(e => e.error).join()}</WebWorker>)
+  const { getByText } = render(
+    <WebWorker url="/worker.js">{({ errors }) => errors.map(e => e.error).join()}</WebWorker>
+  )
   worker.onerror({ error: "foo" })
   worker.onerror({ error: "bar" })
   worker.onerror({ error: "baz" })
@@ -39,7 +47,7 @@ test("passes received errors to children as render prop", async () => {
 })
 
 test("passes last received error to children as render prop", async () => {
-  const { getByText } = render(<WebWorker>{({ error }) => error}</WebWorker>)
+  const { getByText } = render(<WebWorker url="/worker.js">{({ error }) => error}</WebWorker>)
   worker.onerror({ error: "foo" })
   worker.onerror({ error: "bar" })
   worker.onerror({ error: "baz" })
@@ -49,7 +57,9 @@ test("passes last received error to children as render prop", async () => {
 test("passes updatedAt date when a message is received", async () => {
   const date = new Date().toISOString().substr(0, 10)
   const { getByText, queryByText } = render(
-    <WebWorker>{({ updatedAt }) => (updatedAt ? updatedAt.toISOString().substr(0, 10) : null)}</WebWorker>
+    <WebWorker url="/worker.js">
+      {({ updatedAt }) => (updatedAt ? updatedAt.toISOString().substr(0, 10) : null)}
+    </WebWorker>
   )
   expect(queryByText(date)).toBeNull()
   worker.onmessage({ data: "foo" })
@@ -59,7 +69,9 @@ test("passes updatedAt date when a message is received", async () => {
 test("passes updatedAt date when an error is received", async () => {
   const date = new Date().toISOString().substr(0, 10)
   const { getByText, queryByText } = render(
-    <WebWorker>{({ updatedAt }) => (updatedAt ? updatedAt.toISOString().substr(0, 10) : null)}</WebWorker>
+    <WebWorker url="/worker.js">
+      {({ updatedAt }) => (updatedAt ? updatedAt.toISOString().substr(0, 10) : null)}
+    </WebWorker>
   )
   expect(queryByText(date)).toBeNull()
   worker.onerror({ error: "foo" })
@@ -68,21 +80,21 @@ test("passes updatedAt date when an error is received", async () => {
 
 test("invokes onMessage callback with message data when a message is received", async () => {
   const onMessage = jest.fn()
-  render(<WebWorker onMessage={onMessage} />)
+  render(<WebWorker url="/worker.js" onMessage={onMessage} />)
   worker.onmessage({ data: "foo" })
   expect(onMessage).toHaveBeenCalledWith("foo")
 })
 
 test("invokes onError callback with error when a error is received", async () => {
   const onError = jest.fn()
-  render(<WebWorker onError={onError} />)
+  render(<WebWorker url="/worker.js" onError={onError} />)
   worker.onerror({ error: "foo" })
   expect(onError).toHaveBeenCalledWith("foo")
 })
 
 test("terminates the worker when unmounted", async () => {
   worker.terminate.mockClear()
-  const { unmount } = render(<WebWorker />)
+  const { unmount } = render(<WebWorker url="/worker.js" />)
   unmount()
   expect(worker.terminate).toHaveBeenCalled()
 })
@@ -90,7 +102,9 @@ test("terminates the worker when unmounted", async () => {
 test("postMessage sends messages to the worker", async () => {
   worker.postMessage.mockClear()
   const { getByText } = render(
-    <WebWorker>{({ postMessage }) => <button onClick={() => postMessage("hello")}>go</button>}</WebWorker>
+    <WebWorker url="/worker.js">
+      {({ postMessage }) => <button onClick={() => postMessage("hello")}>go</button>}
+    </WebWorker>
   )
   expect(worker.postMessage).not.toHaveBeenCalled()
   fireEvent.click(getByText("go"))
@@ -99,7 +113,7 @@ test("postMessage sends messages to the worker", async () => {
 
 test("calling postMessage before having setup a worker will throw", async () => {
   render(
-    <WebWorker>
+    <WebWorker url="/worker.js">
       {({ postMessage }) => {
         expect(() => postMessage("hello")).toThrow(new Error("Worker not initialized"))
       }}
@@ -110,7 +124,7 @@ test("calling postMessage before having setup a worker will throw", async () => 
 test("serializer will prepare messages before sending them to the worker", async () => {
   worker.postMessage.mockClear()
   const { getByText } = render(
-    <WebWorker serializer={JSON.stringify}>
+    <WebWorker url="/worker.js" serializer={JSON.stringify}>
       {({ postMessage }) => <button onClick={() => postMessage({ foo: "bar" })}>go</button>}
     </WebWorker>
   )
@@ -122,7 +136,7 @@ test("serializer will prepare messages before sending them to the worker", async
 test("parser will deserialize messages received from the worker", async () => {
   const onMessage = jest.fn()
   const { getByText } = render(
-    <WebWorker parser={JSON.parse} onMessage={onMessage}>
+    <WebWorker url="/worker.js" parser={JSON.parse} onMessage={onMessage}>
       {({ data }) => data && data.foo}
     </WebWorker>
   )
@@ -133,7 +147,7 @@ test("parser will deserialize messages received from the worker", async () => {
 
 test("supports passing a custom Worker instance", () => {
   const onMessage = jest.fn()
-  const customWorker = { postMessage: jest.fn() }
+  const customWorker = { onmessage: null, postMessage: jest.fn() }
   const { getByText } = render(
     <WebWorker worker={customWorker} onMessage={onMessage}>
       {({ postMessage }) => <button onClick={() => postMessage("hello")}>go</button>}
@@ -153,9 +167,22 @@ test("custom workers don't terminate on unmount", async () => {
   expect(customWorker.terminate).not.toHaveBeenCalled()
 })
 
+test("supports Service Workers", () => {
+  const onMessage = jest.fn()
+  const customWorker = window.ServiceWorker()
+  const { getByText } = render(
+    <WebWorker worker={customWorker} onMessage={onMessage}>
+      {({ postMessage }) => <button onClick={() => postMessage("hello")}>go</button>}
+    </WebWorker>
+  )
+  expect(customWorker.postMessage).not.toHaveBeenCalled()
+  fireEvent.click(getByText("go"))
+  expect(customWorker.postMessage).toHaveBeenCalledWith("hello", [messageChannel.port2])
+})
+
 test("WebWorker.Data renders with last message data only when a message has been received", async () => {
   const { getByText, queryByText } = render(
-    <WebWorker>
+    <WebWorker url="/worker.js">
       <WebWorker.Data>{data => data}</WebWorker.Data>
     </WebWorker>
   )
@@ -170,7 +197,7 @@ test("WebWorker.Data renders with last message data only when a message has been
 
 test("WebWorker.Error renders with last error only when an error has been received", async () => {
   const { getByText, queryByText } = render(
-    <WebWorker>
+    <WebWorker url="/worker.js">
       <WebWorker.Error>{error => error}</WebWorker.Error>
     </WebWorker>
   )
@@ -185,7 +212,7 @@ test("WebWorker.Error renders with last error only when an error has been receiv
 
 test("WebWorker.Pending renders only when no message has been received yet", async () => {
   const { getByText, queryByText } = render(
-    <WebWorker>
+    <WebWorker url="/worker.js">
       <WebWorker.Pending>pending</WebWorker.Pending>
     </WebWorker>
   )
@@ -196,7 +223,7 @@ test("WebWorker.Pending renders only when no message has been received yet", asy
 
 test("WebWorker.Pending renders only when no error has been received yet", async () => {
   const { getByText, queryByText } = render(
-    <WebWorker>
+    <WebWorker url="/worker.js">
       <WebWorker.Pending>pending</WebWorker.Pending>
     </WebWorker>
   )
@@ -209,7 +236,7 @@ test("An unrelated change in props does not update the Context", async () => {
   let one
   let two
   const { rerender } = render(
-    <WebWorker>
+    <WebWorker url="/worker.js">
       <WebWorker.Pending>
         {value => {
           one = value
@@ -218,7 +245,7 @@ test("An unrelated change in props does not update the Context", async () => {
     </WebWorker>
   )
   rerender(
-    <WebWorker someProp>
+    <WebWorker url="/worker.js" someProp>
       <WebWorker.Pending>
         {value => {
           two = value
