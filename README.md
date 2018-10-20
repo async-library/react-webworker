@@ -1,13 +1,39 @@
-# `<WebWorker>`
+<br/>
+<p align="center">
+  <a href="https://github.com/ghengeveld/react-webworker"><img src="./react-webworker.png" width="425" /></a>
+</p>
+<p align="center">
+  Easy communication with a Web Worker<br/>
+  or Service Worker from React.
+</p>
+<br/>
 
-[![npm version](https://img.shields.io/npm/v/react-webworker.svg)](https://www.npmjs.com/package/react-webworker)
-[![npm downloads](https://img.shields.io/npm/dm/react-webworker.svg)](https://www.npmjs.com/package/react-webworker)
-[![minified size](https://img.shields.io/bundlephobia/min/react-webworker.svg)](https://bundlephobia.com/result?p=react-webworker)
-[![Build status](https://img.shields.io/travis/ghengeveld/react-webworker.svg)](https://travis-ci.org/ghengeveld/react-webworker)
-[![Code coverage](https://img.shields.io/codecov/c/github/ghengeveld/react-webworker.svg)](https://codecov.io/github/ghengeveld/react-webworker)
-[![ISC license](https://img.shields.io/npm/l/react-webworker.svg)](https://opensource.org/licenses/ISC)
-[![GitHub issues](https://img.shields.io/github/issues/ghengeveld/react-webworker.svg)](https://github.com/ghengeveld/react-webworker/issues)
-[![GitHub PRs](https://img.shields.io/github/issues-pr/ghengeveld/react-webworker.svg)](https://github.com/ghengeveld/react-webworker/pulls)
+<p align="center">
+  <a href="https://www.npmjs.com/package/react-webworker">
+    <img src="https://img.shields.io/npm/v/react-webworker.svg" alt="npm version">
+  </a>
+  <a href="https://www.npmjs.com/package/react-webworker">
+    <img src="https://img.shields.io/npm/dm/react-webworker.svg" alt="npm downloads">
+  </a>
+  <a href="https://bundlephobia.com/result?p=react-webworker">
+    <img src="https://img.shields.io/bundlephobia/min/react-webworker.svg" alt="minified size">
+  </a>
+  <a href="https://travis-ci.org/ghengeveld/react-webworker">
+    <img src="https://img.shields.io/travis/ghengeveld/react-webworker.svg" alt="build status">
+  </a>
+  <a href="https://codecov.io/github/ghengeveld/react-webworker">
+    <img src="https://img.shields.io/codecov/c/github/ghengeveld/react-webworker.svg" alt="code coverage">
+  </a>
+  <a href="https://opensource.org/licenses/ISC">
+    <img src="https://img.shields.io/npm/l/react-webworker.svg" alt="license">
+  </a>
+  <a href="https://github.com/ghengeveld/react-webworker/issues">
+    <img src="https://img.shields.io/github/issues/ghengeveld/react-webworker.svg" alt="issues">
+  </a>
+  <a href="https://github.com/ghengeveld/react-webworker/pulls">
+    <img src="https://img.shields.io/github/issues-pr/ghengeveld/react-webworker.svg" alt="pull requests">
+  </a>
+</p>
 
 React component for easy communication with a Web Worker. Leverages the Render Props pattern for ultimate flexibility as
 well as the new Context API for ease of use. Just specify the public url to your Web Worker and you'll get access to
@@ -24,7 +50,7 @@ any messages or errors it sends, as well as the `postMessage` handler. Also work
 - Supports custom Worker instance through the `worker` prop **(new in v2)**
 - Supports communication with Service Workers **(new in v2.1)**
 
-> This package was modeled after [`<Async>`](https://github.com/ghengeveld/react-async) which helps you deal with Promises in React.
+> This package was modeled after [React Async](https://github.com/ghengeveld/react-async) which helps you deal with Promises in React.
 
 ## Install
 
