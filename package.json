@@ -38,8 +38,8 @@
     "babel-preset-stage-2": "6.24.1",
     "jest": "23.5.0",
     "jest-dom": "1.12.0",
-    "react": "16.4.2",
-    "react-dom": "16.4.2",
+    "react": "16.5.0",
+    "react-dom": "16.5.0",
     "react-testing-library": "5.0.0"
   },
   "jest": {
